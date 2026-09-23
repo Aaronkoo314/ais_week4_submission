@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PantryPilot Week 5 Submission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --ground:#EFF2EE;
+    --surface:#FFFFFF;
+    --surface-2:#F6F8F5;
+    --ink:#151C17;
+    --muted:#5A6A5E;
+    --line:#D6DDD6;
+    --line-strong:#BCC6BC;
+    --old:#9A6B1F;
+    --new:#2E7D52;
+    --new-soft:#E3F1E8;
+    --ui:'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --ground:#12150F; --surface:#1A1E19; --surface-2:#22271F;
+      --ink:#E7EDE6; --muted:#9BA89C; --line:#2B322B; --line-strong:#3C453C;
+      --old:#D6A83E; --new:#5DBA83; --new-soft:#17281D;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --ground:#12150F; --surface:#1A1E19; --surface-2:#22271F;
+    --ink:#E7EDE6; --muted:#9BA89C; --line:#2B322B; --line-strong:#3C453C;
+    --old:#D6A83E; --new:#5DBA83; --new-soft:#17281D;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--ui); font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px; margin:0 auto; padding-inline:20px; padding-block:56px 72px}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 10px;
+  }
+  h1{margin:0 0 10px; font-size:30px; font-weight:700; letter-spacing:-.02em; text-wrap:balance}
+  .lede{margin:0 0 6px; color:var(--muted); max-width:58ch}
+  .byline{
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+    padding-bottom:26px; margin-bottom:30px; border-bottom:1px solid var(--line);
+  }
+
+  .card{
+    display:block; text-decoration:none; color:inherit;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:18px 20px; margin-bottom:12px;
+  }
+  a.card:hover{border-color:var(--new); background:var(--surface-2)}
+  a.card:focus-visible{outline:2px solid var(--new); outline-offset:2px}
+  .card h2{
+    margin:0 0 5px; font-size:17px; font-weight:600; letter-spacing:-.01em;
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  }
+  .card p{margin:0; color:var(--muted); font-size:13.5px; max-width:54ch}
+  .kind{
+    font-family:var(--mono); font-size:10px; font-weight:500;
+    text-transform:uppercase; letter-spacing:.1em;
+    padding:3px 7px; border-radius:4px; background:var(--new-soft); color:var(--new);
+  }
+
+  .note{
+    margin-top:26px; padding:16px 18px; border-radius:10px;
+    background:var(--surface-2); border:1px solid var(--line);
+  }
+  .note h3{margin:0 0 7px; font-size:13px; font-weight:600}
+  .note p{margin:0; font-size:13px; color:var(--muted); max-width:56ch}
+  code{
+    font-family:var(--mono); font-size:12px; background:var(--surface);
+    border:1px solid var(--line); border-radius:4px; padding:1px 5px;
+  }
+
+  .deploys{margin-top:30px; border-top:1px solid var(--line); padding-top:20px}
+  .deploys h3{
+    margin:0 0 12px; font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+  }
+  .dep{display:flex; align-items:baseline; gap:10px; margin-bottom:9px; flex-wrap:wrap}
+  .tag{
+    font-family:var(--mono); font-size:10px; font-weight:500;
+    text-transform:uppercase; letter-spacing:.1em; padding:3px 7px; border-radius:4px;
+    flex:0 0 auto;
+  }
+  .tag.old{background:color-mix(in srgb, var(--old) 16%, transparent); color:var(--old)}
+  .tag.new{background:var(--new-soft); color:var(--new)}
+  .dep a{
+    font-family:var(--mono); font-size:12px; color:var(--ink);
+    word-break:break-all; text-decoration:none; border-bottom:1px solid var(--line-strong);
+  }
+  .dep a:hover{border-bottom-color:var(--new)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="eyebrow">MGMT 6110 &middot; Week 5</p>
+  <h1>PantryPilot: before and after</h1>
+  <p class="lede">
+    The setup screen carried the whole ingredient list plus four more questions on one
+    unbounded page. It is now six pages. These two pieces record what changed and let you
+    check it against the running builds.
+  </p>
+  <p class="byline">Aaron Koo &middot; 23 September 2026</p>
+
+  <a class="card" href="pantrypilot-ab.html">
+    <h2>Side-by-side comparison <span class="kind">Tool</span></h2>
+    <p>
+      Both deployments in adjacent frames, with a shared path field, matched viewport
+      presets (1280 / 768 / 390) and a swap-sides control for judging a change without
+      position bias.
+    </p>
+  </a>
+
+  <a class="card" href="https://github.com/Aaronkoo314/ais_week4_submission/blob/main/pantrypilot-heuristic-comparison.md">
+    <h2>Heuristic evaluation <span class="kind">Write-up</span></h2>
+    <p>
+      All ten of Nielsen's heuristics across both builds &mdash; including the four this
+      round did not change and the two where the product is still weak. Opens on GitHub,
+      which renders the Markdown.
+    </p>
+  </a>
+
+  <div class="note">
+    <h3>About the old deployment</h3>
+    <p>
+      It sits behind Vercel Deployment Protection: it answers <code>302</code> into an SSO
+      login that sends <code>X-Frame-Options: DENY</code>, so no browser will embed it. Its
+      pane explains this and offers a retry once protection is lifted. The new deployment
+      embeds normally.
+    </p>
+  </div>
+
+  <section class="deploys">
+    <h3>The two builds</h3>
+    <div class="dep">
+      <span class="tag old">Old</span>
+      <a href="https://pantrypilotclaudecopy-nm5plvk3h-aaronkoo2026-7097.vercel.app" target="_blank" rel="noopener">pantrypilotclaudecopy-nm5plvk3h-aaronkoo2026-7097.vercel.app</a>
+    </div>
+    <div class="dep">
+      <span class="tag new">New</span>
+      <a href="https://pantrypilot-44ebi1vno-aaronkoo2026-7097.vercel.app" target="_blank" rel="noopener">pantrypilot-44ebi1vno-aaronkoo2026-7097.vercel.app</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>
