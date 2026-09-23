@@ -8,6 +8,7 @@ build against the new one in a single view.
 | File | What it is |
 | --- | --- |
 | `pantrypilot-ab.html` | Standalone comparison UI. No build step, no dependencies. |
+| `pantrypilot-heuristic-comparison.md` | Written evaluation of the two builds against Nielsen's ten heuristics. |
 
 ## Running it
 
