@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PantryPilot Side by Side</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --ground:#EFF2EE;
+    --surface:#FFFFFF;
+    --surface-2:#F6F8F5;
+    --ink:#151C17;
+    --muted:#5A6A5E;
+    --line:#D6DDD6;
+    --line-strong:#BCC6BC;
+    --old:#9A6B1F;
+    --old-soft:#F6EDDC;
+    --new:#2E7D52;
+    --new-soft:#E3F1E8;
+    --critical:#A93B2C;
+    --critical-soft:#F8E7E3;
+    --shadow:0 1px 2px rgba(21,28,23,.06), 0 8px 24px rgba(21,28,23,.06);
+    --ui:'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --ground:#12150F;
+      --surface:#1A1E19;
+      --surface-2:#22271F;
+      --ink:#E7EDE6;
+      --muted:#9BA89C;
+      --line:#2B322B;
+      --line-strong:#3C453C;
+      --old:#D6A83E;
+      --old-soft:#2E2718;
+      --new:#5DBA83;
+      --new-soft:#17281D;
+      --critical:#E3796A;
+      --critical-soft:#2E1C18;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --ground:#12150F;
+    --surface:#1A1E19;
+    --surface-2:#22271F;
+    --ink:#E7EDE6;
+    --muted:#9BA89C;
+    --line:#2B322B;
+    --line-strong:#3C453C;
+    --old:#D6A83E;
+    --old-soft:#2E2718;
+    --new:#5DBA83;
+    --new-soft:#17281D;
+    --critical:#E3796A;
+    --critical-soft:#2E1C18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--ui); font-size:14px; line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{height:100%; display:flex; flex-direction:column; min-height:0}
+
+  /* ---------- toolbar ---------- */
+  .bar{
+    flex:0 0 auto; background:var(--surface); border-bottom:1px solid var(--line);
+    padding-block:10px; padding-inline:16px;
+    padding-top:calc(10px + env(safe-area-inset-top, 0px));
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px;
+  }
+  .brand{display:flex; align-items:baseline; gap:9px; margin-right:2px}
+  .brand h1{margin:0; font-size:15px; font-weight:700; letter-spacing:-.01em; white-space:nowrap}
+  .brand .sub{
+    font-family:var(--mono); font-size:10.5px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.08em; white-space:nowrap;
+  }
+  .grow{flex:1 1 auto; min-width:0}
+
+  .field{
+    display:flex; align-items:stretch; min-width:0; flex:1 1 240px; max-width:460px;
+    border:1px solid var(--line-strong); border-radius:7px; background:var(--surface-2);
+    overflow:hidden;
+  }
+  .field label{
+    display:flex; align-items:center; padding-inline:9px;
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    border-right:1px solid var(--line); background:var(--surface); white-space:nowrap;
+  }
+  .field input{
+    flex:1 1 auto; min-width:0; border:0; background:transparent; color:var(--ink);
+    font-family:var(--mono); font-size:12.5px; padding:7px 9px;
+  }
+  .field input:focus{outline:none}
+  .field:focus-within{border-color:var(--new)}
+
+  .seg{display:flex; border:1px solid var(--line-strong); border-radius:7px; overflow:hidden; background:var(--surface-2)}
+  .seg button{
+    appearance:none; border:0; background:transparent; color:var(--muted);
+    font-family:var(--mono); font-size:11px; padding:7px 10px; cursor:pointer;
+    border-right:1px solid var(--line); white-space:nowrap;
+  }
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:var(--ground); font-weight:600}
+  .seg button:hover:not([aria-pressed="true"]){background:var(--surface); color:var(--ink)}
+
+  .btn{
+    appearance:none; cursor:pointer; white-space:nowrap;
+    border:1px solid var(--line-strong); background:var(--surface); color:var(--ink);
+    border-radius:7px; padding:7px 11px; font-family:var(--ui); font-size:12.5px; font-weight:500;
+  }
+  .btn:hover{background:var(--surface-2); border-color:var(--muted)}
+  .btn.primary{background:var(--ink); color:var(--ground); border-color:var(--ink); font-weight:600}
+  .btn.primary:hover{opacity:.88; background:var(--ink)}
+  .btn.tiny{padding:4px 8px; font-size:11.5px; font-family:var(--mono)}
+  button:focus-visible, input:focus-visible, a:focus-visible{outline:2px solid var(--new); outline-offset:2px}
+
+  /* ---------- panes ---------- */
+  .panes{
+    flex:1 1 auto; min-height:0; display:grid; gap:1px;
+    grid-template-columns:1fr 1fr; background:var(--line);
+  }
+  .pane{min-width:0; min-height:0; display:flex; flex-direction:column; background:var(--ground)}
+  .pane[data-role="old"]{order:1}
+  .pane[data-role="new"]{order:2}
+  body[data-swapped="true"] .pane[data-role="old"]{order:2}
+  body[data-swapped="true"] .pane[data-role="new"]{order:1}
+
+  .pane-head{
+    flex:0 0 auto; display:flex; align-items:center; gap:9px;
+    padding:8px 12px; background:var(--surface); border-bottom:1px solid var(--line); min-width:0;
+  }
+  .tag{
+    font-family:var(--mono); font-size:10.5px; font-weight:600;
+    text-transform:uppercase; letter-spacing:.1em;
+    padding:3px 7px; border-radius:4px; white-space:nowrap;
+  }
+  .pane[data-role="old"] .tag{background:var(--old-soft); color:var(--old)}
+  .pane[data-role="new"] .tag{background:var(--new-soft); color:var(--new)}
+
+  .host{
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1 1 auto;
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+    font-family:var(--mono); font-size:10.5px; padding:3px 7px; border-radius:999px;
+    border:1px solid var(--line-strong); color:var(--muted); background:var(--surface-2);
+  }
+  .dot{width:6px; height:6px; border-radius:50%; background:var(--muted); flex:0 0 auto}
+  .chip[data-state="loading"] .dot{background:var(--old); animation:pulse 1.1s ease-in-out infinite}
+  .chip[data-state="ok"]{color:var(--new); border-color:var(--new)}
+  .chip[data-state="ok"] .dot{background:var(--new)}
+  .chip[data-state="blocked"]{color:var(--critical); border-color:var(--critical); background:var(--critical-soft)}
+  .chip[data-state="blocked"] .dot{background:var(--critical)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+  @media (prefers-reduced-motion: reduce){ .chip[data-state="loading"] .dot{animation:none} }
+
+  /* ---------- stage ---------- */
+  .stage{
+    position:relative; flex:1 1 auto; min-height:0;
+    display:flex; justify-content:center; align-items:flex-start;
+    overflow:hidden; background:var(--surface-2);
+  }
+  .frame-wrap{
+    flex:0 0 auto; transform-origin:top center; background:var(--surface); box-shadow:var(--shadow);
+  }
+  .frame-wrap.fill{width:100%; height:100%; transform:none}
+  .frame-wrap.framed{border:1px solid var(--line-strong)}
+  iframe{width:100%; height:100%; border:0; display:block; background:var(--surface)}
+
+  .notice{
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; justify-content:center; gap:12px;
+    padding:22px; background:var(--surface-2); overflow-y:auto;
+  }
+  .notice h2{
+    margin:0; font-size:15px; font-weight:700; letter-spacing:-.01em; text-wrap:balance;
+    display:flex; align-items:center; gap:8px;
+  }
+  .notice h2::before{content:""; width:9px; height:9px; border-radius:2px; background:var(--critical); flex:0 0 auto}
+  .notice p{margin:0; color:var(--muted); font-size:13px; max-width:52ch}
+  .notice code{
+    font-family:var(--mono); font-size:11.5px; background:var(--surface);
+    border:1px solid var(--line); border-radius:4px; padding:1px 5px; color:var(--ink);
+  }
+  .notice ol{margin:0; padding-left:18px; color:var(--muted); font-size:12.5px; max-width:52ch}
+  .notice ol li{margin-bottom:5px}
+  .notice ol li::marker{font-family:var(--mono); color:var(--ink)}
+  .notice .row{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px}
+  .verified{
+    font-family:var(--mono); font-size:10.5px; color:var(--muted);
+    border-top:1px solid var(--line); padding-top:9px; margin-top:2px;
+  }
+
+  /* ---------- footer ---------- */
+  .foot{
+    flex:0 0 auto; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center;
+    padding:7px 16px; padding-bottom:calc(7px + env(safe-area-inset-bottom, 0px));
+    background:var(--surface); border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:10.5px; color:var(--muted);
+  }
+  .foot b{color:var(--ink); font-weight:600}
+
+  @media (max-width: 860px){
+    .panes{grid-template-columns:1fr; grid-auto-rows:minmax(340px, 1fr); overflow-y:auto}
+    .brand .sub{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="bar">
+    <div class="brand">
+      <h1>PantryPilot A/B</h1>
+      <span class="sub">old vs new</span>
+    </div>
+
+    <div class="field">
+      <label for="path">path</label>
+      <input id="path" type="text" value="/" spellcheck="false" autocomplete="off" aria-label="Shared path applied to both deployments">
+    </div>
+
+    <div class="seg" role="group" aria-label="Viewport width">
+      <button type="button" data-w="fill" aria-pressed="true">Fill</button>
+      <button type="button" data-w="1280" aria-pressed="false">1280</button>
+      <button type="button" data-w="768" aria-pressed="false">768</button>
+      <button type="button" data-w="390" aria-pressed="false">390</button>
+    </div>
+
+    <div class="grow"></div>
+    <button class="btn" type="button" id="swap">Swap sides</button>
+    <button class="btn primary" type="button" id="reload">Reload both</button>
+  </header>
+
+  <main class="panes" id="panes"></main>
+
+  <footer class="foot">
+    <span><b>Old</b> pantrypilotclaudecopy-nm5plvk3h</span>
+    <span><b>New</b> pantrypilot-44ebi1vno</span>
+    <span>In-frame navigation is cross-origin &mdash; the path field can&rsquo;t read it back.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DEPLOYS = [
+    { role:"old", label:"Old",
+      origin:"https://pantrypilotclaudecopy-nm5plvk3h-aaronkoo2026-7097.vercel.app",
+      gated:true },
+    { role:"new", label:"New",
+      origin:"https://pantrypilot-44ebi1vno-aaronkoo2026-7097.vercel.app",
+      gated:false }
+  ];
+
+  var panes = document.getElementById("panes");
+  var pathInput = document.getElementById("path");
+  var preset = "fill";
+  var timers = {};
+
+  function normalizePath(v){
+    v = (v || "").trim();
+    if (!v) return "/";
+    if (v.charAt(0) !== "/") v = "/" + v;
+    return v;
+  }
+
+  function urlFor(d){ return d.origin + normalizePath(pathInput.value); }
+
+  function setStatus(role, state, text){
+    var chip = document.getElementById("chip-" + role);
+    if (!chip) return;
+    chip.setAttribute("data-state", state);
+    chip.lastElementChild.textContent = text;
+  }
+
+  function buildNotice(d){
+    var n = document.createElement("div");
+    n.className = "notice";
+    n.innerHTML =
+      '<h2>This deployment requires a Vercel sign-in</h2>' +
+      '<p>The URL answers <code>302</code> and redirects to Vercel&rsquo;s SSO login, which sends ' +
+      '<code>X-Frame-Options: DENY</code>. No browser will embed it, so this pane stays empty until ' +
+      'the deployment is reachable without a login.</p>' +
+      '<ol>' +
+        '<li>Vercel dashboard &rarr; the <b>pantrypilot</b> project &rarr; <b>Settings</b> &rarr; <b>Deployment Protection</b>.</li>' +
+        '<li>Turn off <b>Vercel Authentication</b>, or add this deployment to <b>Protection Bypass</b>.</li>' +
+        '<li>A <b>shareable link</b> works too &mdash; swap its <code>?_vercel_share=</code> URL in for the origin.</li>' +
+        '<li>Come back and hit <b>Retry</b>.</li>' +
+      '</ol>' +
+      '<div class="row">' +
+        '<button class="btn primary" type="button" data-act="retry">Retry</button>' +
+        '<button class="btn" type="button" data-act="open">Open in new tab</button>' +
+        '<button class="btn" type="button" data-act="dismiss">Show pane anyway</button>' +
+      '</div>' +
+      '<p class="verified">Checked 23 Sep 2026 &mdash; the new deployment returned 200 with no framing headers and embeds fine.</p>';
+
+    n.addEventListener("click", function(e){
+      var act = e.target.getAttribute && e.target.getAttribute("data-act");
+      if (!act) return;
+      if (act === "open"){ window.open(urlFor(d), "_blank", "noopener"); return; }
+      n.remove();
+      if (act === "retry"){ d.gated = false; load(d, true); }
+      else { setStatus(d.role, "blocked", "Blocked"); }
+    });
+    return n;
+  }
+
+  function buildPane(d){
+    var pane = document.createElement("section");
+    pane.className = "pane";
+    pane.setAttribute("data-role", d.role);
+
+    var head = document.createElement("div");
+    head.className = "pane-head";
+
+    var tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = d.label;
+
+    var host = document.createElement("span");
+    host.className = "host";
+    host.title = d.origin;
+    host.textContent = d.origin.replace("https://", "");
+
+    var chip = document.createElement("span");
+    chip.className = "chip";
+    chip.id = "chip-" + d.role;
+    chip.setAttribute("data-state", "loading");
+    chip.innerHTML = '<span class="dot"></span><span>Loading</span>';
+
+    var one = document.createElement("button");
+    one.className = "btn tiny";
+    one.type = "button";
+    one.textContent = "Reload";
+    one.addEventListener("click", function(){ load(d, true); });
+
+    var out = document.createElement("button");
+    out.className = "btn tiny";
+    out.type = "button";
+    out.textContent = "Open ↗";
+    out.addEventListener("click", function(){ window.open(urlFor(d), "_blank", "noopener"); });
+
+    head.appendChild(tag);
+    head.appendChild(host);
+    head.appendChild(chip);
+    head.appendChild(one);
+    head.appendChild(out);
+
+    var stage = document.createElement("div");
+    stage.className = "stage";
+
+    var wrap = document.createElement("div");
+    wrap.className = "frame-wrap";
+
+    var frame = document.createElement("iframe");
+    frame.id = "frame-" + d.role;
+    frame.title = d.label + " PantryPilot deployment";
+    frame.setAttribute("referrerpolicy", "no-referrer");
+    wrap.appendChild(frame);
+    stage.appendChild(wrap);
+
+    if (d.gated){ stage.appendChild(buildNotice(d)); }
+
+    pane.appendChild(head);
+    pane.appendChild(stage);
+    return pane;
+  }
+
+  function load(d, force){
+    var frame = document.getElementById("frame-" + d.role);
+    if (!frame) return;
+
+    if (d.gated && !force){
+      setStatus(d.role, "blocked", "Sign-in required");
+      return;
+    }
+
+    setStatus(d.role, "loading", "Loading");
+    clearTimeout(timers[d.role]);
+    timers[d.role] = setTimeout(function(){
+      setStatus(d.role, "blocked", "No response");
+    }, 9000);
+
+    frame.onload = function(){
+      clearTimeout(timers[d.role]);
+      setStatus(d.role, "ok", "Rendered");
+    };
+    frame.src = urlFor(d);
+  }
+
+  function layout(){
+    var list = document.querySelectorAll(".pane");
+    for (var i = 0; i < list.length; i++){
+      var stage = list[i].querySelector(".stage");
+      var wrap = list[i].querySelector(".frame-wrap");
+      if (preset === "fill"){
+        wrap.classList.remove("framed");
+        wrap.classList.add("fill");
+        wrap.style.width = "";
+        wrap.style.height = "";
+        wrap.style.transform = "";
+      } else {
+        var w = stage.clientWidth, h = stage.clientHeight;
+        if (!w || !h) continue;
+        var target = parseInt(preset, 10);
+        wrap.classList.remove("fill");
+        var k = Math.min(1, (w - 24) / target);
+        wrap.classList.add("framed");
+        wrap.style.width = target + "px";
+        wrap.style.height = Math.max(200, (h - 24) / k) + "px";
+        wrap.style.transform = "scale(" + k + ") translateY(12px)";
+      }
+    }
+  }
+
+  DEPLOYS.forEach(function(d){ panes.appendChild(buildPane(d)); });
+  layout();
+  DEPLOYS.forEach(function(d){ load(d, false); });
+
+  document.getElementById("reload").addEventListener("click", function(){
+    DEPLOYS.forEach(function(d){ load(d, false); });
+  });
+
+  document.getElementById("swap").addEventListener("click", function(){
+    document.body.setAttribute("data-swapped",
+      document.body.getAttribute("data-swapped") === "true" ? "false" : "true");
+  });
+
+  pathInput.addEventListener("keydown", function(e){
+    if (e.key === "Enter"){
+      pathInput.value = normalizePath(pathInput.value);
+      DEPLOYS.forEach(function(d){ load(d, false); });
+    }
+  });
+  pathInput.addEventListener("blur", function(){
+    pathInput.value = normalizePath(pathInput.value);
+  });
+
+  var segButtons = document.querySelectorAll(".seg button");
+  for (var s = 0; s < segButtons.length; s++){
+    segButtons[s].addEventListener("click", function(){
+      for (var j = 0; j < segButtons.length; j++){
+        segButtons[j].setAttribute("aria-pressed", "false");
+      }
+      this.setAttribute("aria-pressed", "true");
+      preset = this.getAttribute("data-w");
+      layout();
+    });
+  }
+
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(layout);
+    var stages = document.querySelectorAll(".stage");
+    for (var r = 0; r < stages.length; r++){ ro.observe(stages[r]); }
+  }
+  window.addEventListener("resize", layout);
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(layout); }
+})();
+</script>
+</body>
+</html>
